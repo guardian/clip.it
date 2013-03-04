@@ -1,0 +1,111 @@
+.clipit-popout {
+	background: $brand-white;
+	border: 1px solid $brand-white;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .6);
+	position: absolute;	
+	z-index: 500;
+
+	p {
+		font-family: Georgia, serif;
+		margin: 0 0 0.5em 0;
+		padding: 0;
+	}
+
+	.clipit-header {
+		background: $brand-blue;
+		color: $brand-white;
+		font-size: 18px;
+		line-height: 1;
+		padding: $padding-s 0 $padding-s $padding;
+		text-align: left;
+	}
+
+	.clipit-footer {
+		background: $brand-blue-light;
+		color: $brand-white;
+		font: 12px/1.2;
+	}
+
+	.clipit-menu {
+		border-right: 1px solid $grey-light;
+		float: left;
+	}
+
+	.clipit-action-container {
+		display: none;
+		float: left;
+		max-width: 400px;
+		padding: $padding-s $padding;
+	}
+
+	.clipit-comment-quote {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.clipit-save {
+		cursor: pointer;
+		padding: $padding-xs;
+		text-align: center;
+	}
+
+	.clipit-actions {
+		padding: $padding;
+
+		.clipit-action {
+			border-top: 1px solid $grey-light;
+			cursor: pointer;
+			padding: $padding-s;
+
+			&:first-child {
+				border-top: 0 none;
+			}
+		}
+	}
+
+	.clipit-embed-data {
+		@extend %textarea;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.clipit-post-comment-box {
+		@extend %textarea;
+		font-size: 12px;
+		min-height: 150px;
+	}
+
+	/* arrow */
+	.clipit-arrow-left {
+		left: 0;
+		position: absolute;
+		top: 15px;
+	}
+
+	.clipit-arrow-left:after, .clipit-arrow-left:before {
+		right: 100%;
+		border: solid transparent;
+		content: " ";
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+	}
+
+	.clipit-arrow-left:after {
+		border-color: transparent;
+		border-right-color: $brand-blue;
+		border-width: 9px;
+		top: 50%;
+		margin-top: -9px;
+	}
+
+	.clipit-arrow-left:before {
+		border-color: transparent;
+		border-right-color: $brand-white;
+		border-width: 10px;
+		top: 50%;
+		margin-top: -10px;
+	}
+}

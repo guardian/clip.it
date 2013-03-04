@@ -1,0 +1,99 @@
+.clipit-popout {
+  background: #faf9f4;
+  border: 1px solid #faf9f4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  position: absolute;
+  z-index: 500;
+  /* arrow */ }
+  .clipit-popout p {
+    font-family: Georgia, serif;
+    margin: 0 0 0.5em 0;
+    padding: 0; }
+  .clipit-popout .clipit-header {
+    background: #066ec9;
+    color: #faf9f4;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0.5em 0 0.5em 1em;
+    text-align: left; }
+  .clipit-popout .clipit-footer {
+    background: #cde2f4;
+    color: #faf9f4;
+    font: 12px/1.2; }
+  .clipit-popout .clipit-menu {
+    border-right: 1px solid #ededed;
+    float: left; }
+  .clipit-popout .clipit-action-container {
+    display: none;
+    float: left;
+    max-width: 400px;
+    padding: 0.5em 1em; }
+  .clipit-popout .clipit-comment-quote {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+  .clipit-popout .clipit-save {
+    cursor: pointer;
+    padding: 0.25em;
+    text-align: center; }
+  .clipit-popout .clipit-actions {
+    padding: 1em; }
+    .clipit-popout .clipit-actions .clipit-action {
+      border-top: 1px solid #ededed;
+      cursor: pointer;
+      padding: 0.5em; }
+      .clipit-popout .clipit-actions .clipit-action:first-child {
+        border-top: 0 none; }
+  .clipit-popout .clipit-embed-data {
+    overflow: hidden;
+    white-space: nowrap; }
+  .clipit-popout .clipit-post-comment-box {
+    font-size: 12px;
+    min-height: 150px; }
+  .clipit-popout .clipit-arrow-left {
+    left: 0;
+    position: absolute;
+    top: 15px; }
+  .clipit-popout .clipit-arrow-left:after, .clipit-popout .clipit-arrow-left:before {
+    right: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none; }
+  .clipit-popout .clipit-arrow-left:after {
+    border-color: transparent;
+    border-right-color: #066ec9;
+    border-width: 9px;
+    top: 50%;
+    margin-top: -9px; }
+  .clipit-popout .clipit-arrow-left:before {
+    border-color: transparent;
+    border-right-color: #faf9f4;
+    border-width: 10px;
+    top: 50%;
+    margin-top: -10px; }
+
+.clipit-popout .clipit-embed-data, .clipit-popout .clipit-post-comment-box {
+  border: 1px solid #999999;
+  color: #999999;
+  font: 14px/1.4 Helvetica, sans-serif;
+  min-width: 300px;
+  padding: 0.25em 0;
+  resize: none;
+  width: 100%; }
+
+.clipit-start {
+  background: #faf9f4;
+  color: #066ec9;
+  cursor: pointer;
+  padding: 0.25em; }
+
+[data-clipping-it="true"] .ci-highlight {
+  background: #cde2f4;
+  cursor: pointer; }
+
+[class^="clipit-"] {
+  color: #333333;
+  font: 14px/1.4 Georgia, serif; }

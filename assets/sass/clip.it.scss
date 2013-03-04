@@ -1,0 +1,44 @@
+$brand-blue: #066ec9;
+$brand-blue-light: #cde2f4;
+$brand-white: #faf9f4;
+
+$grey-dark: #333;
+$grey: #999;
+$grey-light: #ededed;
+
+$padding: 1em;
+$padding-s: 0.5em;
+$padding-xs: 0.25em;
+
+@import "module/popout.scss";
+
+%textarea {
+	border: 1px solid $grey;
+	color: $grey;
+	font: 14px/1.4 Helvetica, sans-serif;
+	min-width: 300px;
+	padding: $padding-xs 0;
+	resize: none;
+	width: 100%;
+}
+
+.clipit-start {
+	background: $brand-white;
+	color: $brand-blue;
+	cursor: pointer;
+	padding: $padding-xs;
+}
+
+[data-clipping-it="true"] {
+	.ci-highlight {
+		background: $brand-blue-light;
+		cursor: pointer;
+	}
+
+	.ci-unhighlight {}
+}
+
+[class^="clipit-"] {
+	color: $grey-dark;
+	font: 14px/1.4 Georgia, serif;
+}
