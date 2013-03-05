@@ -1,9 +1,9 @@
 # Clip.it
 
-## Keepings all your clippings from the Guardian in a safe place
+See it, clip it, keep it
 
 
-## What's this?
+## What's this all about?
 
 A simple system to store all the bits of articles you find interesting, or worth keeping to reference at a later date
 
@@ -38,7 +38,7 @@ A simple system to store all the bits of articles you find interesting, or worth
 * Social sharing
 * Widgets
 
-	clip.widget.bits('.clip-bits'); // This will be a list of tweets from around the site allowing cross site pollination
-	clip.widget.embed('.clip-embed'); // This will be something external users can use. Similar to https://dev.twitter.com/docs/embedded-tweets
+		clip.widget.bits('.clip-bits'); // This will be a list of tweets from around the site allowing cross site pollination
+		clip.widget.embed('.clip-embed'); // This will be something external users can use. Similar to https://dev.twitter.com/docs/embedded-tweets
 
 * Ich bin complete setup
