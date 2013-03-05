@@ -38,7 +38,11 @@ A simple system to store all the bits of articles you find interesting, or worth
 * Social sharing
 * Widgets
 
-		clip.widget.bits('.clip-bits'); // This will be a list of tweets from around the site allowing cross site pollination
-		clip.widget.embed('.clip-embed'); // This will be something external users can use. Similar to https://dev.twitter.com/docs/embedded-tweets
+		// Listing the clips from around the site allowing cross site pollination
+		clip.widget.bits('.clip-bits');
+
+		// This will be something external users can use.
+		// Similar to https://dev.twitter.com/docs/embedded-tweets
+		clip.widget.embed('.clip-embed');
 
 * Ich bin complete setup
