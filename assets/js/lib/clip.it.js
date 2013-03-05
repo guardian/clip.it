@@ -1,5 +1,6 @@
 define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
   var el
+    , clippableElements
     , popout
     , highlightClassname = 'ci-highlight'
     , defaultData = {}
@@ -38,7 +39,7 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
       this.el.appendTo('body');
       this.actionEl = $('.clipit-action-container', this.el);
       $('[data-clipit-action]', this.el).on('click', $.proxy(this.showAction, this));
-      $('.clipit-save', el).on('click', save);
+      $('.clipit-save', this.el).on('click', save);
     },
 
     show: function(options) {
@@ -134,17 +135,16 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
   }
 
   function startClipping() {
-    var allowedElements = $(config.allowedElements, el);
     el = $(config.container).attr('data-clipping-it', true);
-    allowedElements.on('mouseover', highlight);
-    allowedElements.on('mouseout', unhighlight);
-    allowedElements.on('click', showClipDialogue);
+    clippableElements = $(config.allowedElements, el);
+    clippableElements.on('mouseover', highlight);
+    clippableElements.on('mouseout', unhighlight);
+    clippableElements.on('click', showClipDialogue);
   }
 
   function stopClipping() {
-    var allowedElements = $(config.allowedElements, el);
     el = $(config.container).attr('data-clipping-it', false);
-    allowedElements.unbind();
+    clippableElements.unbind();
   }
 
   function highlight(e) {
