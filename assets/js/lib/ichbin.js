@@ -24,7 +24,6 @@ define(['jquery', 'guardian_idToolkit'], function($, ID) {
   }
 
   function get(collection) {
-    console.log('GETTING');
     var url = getUrl(collection)
       , data = {
             GU_U: 'WyIyMzEwOTU5IiwiamdvcnJpZUBnbWFpbC5jb20iLCJqYW1lc2dvcnJpZSIsIjUzNCIsMTM3MDE1NjE3MDkyOV0.MC4CFQC84j8IfqSiCjR2VpHiUBRv2sMG3gIVAJolokpdQvQXEeF-7XnTI3pVaSGs' // ID.localUserData().rawResponse,

@@ -4,7 +4,11 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
     , highlightClassname = 'ci-highlight'
     , defaultData = {}
     , currentClip = {}
-    , config = { allowedElements: 'a, p, [itemprop="image"]' };
+    , config = {
+        container: 'body',
+        allowedElements: 'p'
+      }
+    , clipping = false;
 
   // popout
   popout = {
@@ -33,7 +37,7 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
       
       this.el.appendTo('body');
       this.actionEl = $('.clipit-action-container', this.el);
-      $('[data-clipit-action]', el).on('click', action);
+      $('[data-clipit-action]', this.el).on('click', $.proxy(this.showAction, this));
       $('.clipit-save', el).on('click', save);
     },
 
@@ -43,8 +47,10 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
       this.el.css(options.position).show();
     },
 
-    showAction: function(action) {
-      var templateHtml = this.template(this.actions[action].template);
+    showAction: function(e) {
+      var action = e.currentTarget.getAttribute('data-clipit-action')
+        , templateHtml = this.template(this.actions[action].template);
+        
       this.actionEl.empty().append(templateHtml);
       this.actionEl.show();
       this.actions[action].func();
@@ -60,7 +66,7 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
           '<textarea class="clipit-embed-data">'+
             '<blockquote class="clipit-embed">'+
               '{{ content }}'+
-              '<footer>- <a href="{{ author_url }}">{{ author_name }}</a> on <cite><a href="{{ content_url }}">{{ content_title }}</a></footer>'+
+              '<footer>- <a href="{{ authorUrl }}">{{ authorName }}</a> on <cite><a href="{{ contentUrl }}">{{ contentTitle }}</a></footer>'+
             '</blockquote>'+
           '</textarea>'
       },
@@ -110,16 +116,35 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
     });
   }
 
-  function defaults(data) {
+  function values(data) {
     currentClip = $.extend(defaultData, data);
     popout.defaultData = currentClip;
   }
 
-  function addClipArea(el) {
-    el = $(el).attr('data-clipping-it', true);
-    $(config.allowedElements, el).on('mouseover', highlight);
-    $(config.allowedElements, el).on('mouseout', unhighlight);
-    $(config.allowedElements, el).on('click', showClipDialogue);
+  function setConfig(options) {
+    config = $.extend(config, options);
+  }
+
+  function toggle() {
+    if (clipping === true) {
+      stopClipping();
+    } else {
+      startClipping();
+    }
+  }
+
+  function startClipping() {
+    var allowedElements = $(config.allowedElements, el);
+    el = $(config.container).attr('data-clipping-it', true);
+    allowedElements.on('mouseover', highlight);
+    allowedElements.on('mouseout', unhighlight);
+    allowedElements.on('click', showClipDialogue);
+  }
+
+  function stopClipping() {
+    var allowedElements = $(config.allowedElements, el);
+    el = $(config.container).attr('data-clipping-it', false);
+    allowedElements.unbind();
   }
 
   function highlight(e) {
@@ -147,13 +172,6 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
     }); 
   }
 
-  function action(e) {
-    var elem = $(e.currentTarget)
-      , action = elem.attr('data-clipit-action');
-
-    popout.showAction(action);
-  }
-
   function save() {
     ichbin.save('clip.it', currentClip);
   }
@@ -170,8 +188,11 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
   // TODO - review if this is good
   init();
   return {
-    it: addClipArea,
-    defaults: defaults,
+    it: startClipping,
+    stop: stopClipping,
+    toggle: toggle,
+    values: values,
+    config: setConfig,
 
     // TODO
     widget: {

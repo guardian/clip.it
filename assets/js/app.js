@@ -15,18 +15,21 @@ requirejs.config({
 requirejs(['jquery', 'lib/clip.it'], function($, clip) {
 	var author = $('[rel="author"]');
 
-	clip.defaults({
-		author_name: author.text(),
-		author_url: author.attr('href'),
-		content_title: $('[itemprop*="headline"]').text(),
-		content_url: $('#printlink').attr('href').replace('/print', '')
+	clip.config({
+		container: '#article-wrapper',
+		allowedElements: 'a, p, [itemprop="image"]'
+	});
+
+	clip.values({
+		authorName: author.text(),
+		authorUrl: author.attr('href'),
+		contentTitle: $('[itemprop*="headline"]').text(),
+		contentUrl: $('#printlink').attr('href').replace('/print', '')
 	});
 
 	var startClipping = $('<div class="clipit-start">Clip.it</div>').on('click', function() {
-		clip.it('#article-wrapper');
-		$(this).text('Stop yo\' clippin\'');
-	}).prependTo('#article-wrapper').click();
+		clip.toggle();
+	}).prependTo('#article-wrapper');
 	
-	clip.widget.bits('.clip-bits');
-	clip.widget.embed('.clip-embed');
+	
 });
