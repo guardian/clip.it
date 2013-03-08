@@ -161,6 +161,7 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
   }
 
   function showClipDialogue(e) {
+    e.preventDefault();
     var elem = $(e.currentTarget);
     $('[data-being-clipped]', el).removeAttr('data-being-clipped').removeClass(highlightClassname);
     elem.attr('data-being-clipped', 'true');
