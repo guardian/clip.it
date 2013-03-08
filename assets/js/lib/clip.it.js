@@ -140,11 +140,13 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
     clippableElements.on('mouseover', highlight);
     clippableElements.on('mouseout', unhighlight);
     clippableElements.on('click', showClipDialogue);
+    clipping = true;
   }
 
   function stopClipping() {
     el = $(config.container).attr('data-clipping-it', false);
     clippableElements.unbind();
+    clipping = false;
   }
 
   function highlight(e) {
