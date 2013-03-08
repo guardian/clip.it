@@ -1,4 +1,4 @@
-define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
+define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
   var el
     , clippableElements
     , popout
@@ -181,7 +181,7 @@ define(['jquery', 'guardian_idToolkit', 'lib/ichbin'], function($, ID, ichbin) {
     var link = document.createElement('link');
     link.type = 'text/css';
     link.rel = 'stylesheet';
-    link.href = 'http://gnm41087.int.gnl/p/clip.it/assets/css/clip.it.css';
+    link.href = '/assets/css/clip.it.css';
     document.getElementsByTagName('head')[0].appendChild(link);
   }
 
