@@ -42,8 +42,15 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
       $('.clipit-save', this.el).on('click', save);
     },
 
+    hide: function() {
+        if (this.el) {
+            this.el.hide();
+            this.actionEl.empty().hide();
+        };
+    },
+
     show: function(options) {
-      if (!this.el) { this.create(); }
+      if (!this.el) { this.create(); };
       this.clip = options.clip;
       this.el.css(options.position).show();
     },
@@ -146,6 +153,7 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
   function stopClipping() {
     el = $(config.container).attr('data-clipping-it', false);
     clippableElements.unbind();
+    hideClipDialogue();
     clipping = false;
   }
 
@@ -162,8 +170,9 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
 
   function showClipDialogue(e) {
     e.preventDefault();
+    hideClipDialogue();
+
     var elem = $(e.currentTarget);
-    $('[data-being-clipped]', el).removeAttr('data-being-clipped').removeClass(highlightClassname);
     elem.attr('data-being-clipped', 'true');
 
     currentClip.content = elem.html();
@@ -173,6 +182,11 @@ define(['jquery', 'guardian_idToolkit', 'ichbin'], function($, ID, ichbin) {
       position: { top: e.pageY-17, left: e.pageX+17 },
       clip: currentClip
     }); 
+  }
+
+  function hideClipDialogue() {
+    $('[data-being-clipped]', el).removeAttr('data-being-clipped').removeClass(highlightClassname);
+    popout.hide();
   }
 
   function save() {
