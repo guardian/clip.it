@@ -1,9 +1,10 @@
 requirejs.config({
+    baseUrl: 'http://localhost:8000/',
     paths: {
         'guardian_idToolkit': 'https://id.guardian.co.uk/static/180/cs/js/guardian.identity.clientside-toolkit',
         'jquery': '//pasteup.guim.co.uk/js/lib/jquery/1.8.1/jquery.min',
-        'clip.it': 'lib/clip.it.v0',
-        'ichbin': 'lib/ichbin'
+        'clip.it': 'assets/js/lib/clip.it.v0',
+        'ichbin': 'assets/js/lib/ichbin'
     }
 });
 

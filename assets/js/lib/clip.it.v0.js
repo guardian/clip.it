@@ -1,8 +1,9 @@
 define([
     'jquery',
     'guardian_idToolkit',
-    'ichbin'
-    ], function($, ID, ichbin) {
+    'ichbin',
+    'require'
+    ], function($, ID, ichbin, req) {
         var el,
             popout,
             defaultData = {},
@@ -15,9 +16,7 @@ define([
     // popout
     popout = {
         el: null,
-        actionEl: null,
         defaultData: {},
-        data: {},
         create: function() {
             // TODO: move to some form of templating
             this.el = $('<div class="clipit-popout">' +
@@ -25,28 +24,13 @@ define([
                             '<div class="clipit-menu">' +
                                 '<div class="clipit-header">Clip.it</div>' +
                                 '<div class="clipit-actions">' +
-                                    '<div class="clipit-action" role="button" data-clipit-action="embed">Embed</div>' +
                                     '<div class="clipit-action" role="button" data-clipit-action="comment">Comment</div>' +
-                                    '<div class="clipit-action" role="button" data-clipit-action="share-facebook">Facebook</div>' +
-                                    '<div class="clipit-action" role="button" data-clipit-action="share-twitter">Twitter</div>' +
-                                '</div>' +
-                                '<div class="clipit-footer">' +
-                                    '<div class="clipit-save">Save</div>' +
                                 '</div>' +
                             '</div>' +
-                            '<div class="clipit-action-container"></div>' +
                         '</div>');
 
             this.el.appendTo('body');
-            this.actionEl = $('.clipit-action-container', this.el);
-            $('[data-clipit-action]', this.el).on('click', $.proxy(this.showAction, this));
-            $('.clipit-save', this.el).on('click', save);
-        },
-
-        clean: function() {
-            if (this.el) {
-                this.actionEl.empty().hide();
-            };
+            $('[data-clipit-action]', this.el).on('mousedown', $.proxy(this.showAction, this));
         },
 
         hide: function() {
@@ -58,59 +42,28 @@ define([
         show: function(options) {
             if (!this.el) {
                 this.create();
-            } else {
-                this.clean();
             }
             this.clip = options.clip;
             this.el.css(options.position).show();
         },
 
         showAction: function(e) {
-            var action = e.currentTarget.getAttribute('data-clipit-action'),
-                templateHtml = this.template(this.actions[action].template);
-
-            this.actionEl.empty().append(templateHtml);
-            this.actionEl.show();
+            e.stopPropagation();
+            var action = e.currentTarget.getAttribute('data-clipit-action');
             this.actions[action].func();
         },
 
         actions: {
-            embed: {
-                func: function() {
-                    $('.clipit-embed-data').select();
-                },
-                template:
-                '<p>Add this clip to your website by copying the code below.</p>'+
-                '<textarea class="clipit-embed-data">'+
-                    '<blockquote class="clipit-embed">'+
-                        '{{ content }}'+
-                    '<footer>- <a href="{{ authorUrl }}">{{ authorName }}</a> on <cite><a href="{{ contentUrl }}">{{ contentTitle }}</a></footer>'+
-                    '</blockquote>'+
-                '</textarea>'
-            },
-
             comment: {
                 func: function() {
-                    $('.clipit-post-comment-box').focus();
-                },
-                template:
-                '<p>Post your comment below.</p>'+
-                '<blockquote class="clipit-comment-quote">{{ content }}</blockquote>'+
-                    '<textarea class="clipit-post-comment-box"></textarea>'+
-                '<button class="clipit-post-comment">Post it</button>'
+                    if (ID.isLoggedIn()) {
+                        $('#discussion-preview-comment').trigger('mousedown').click();
+                    } else {
+                        ID.showLoginIfNotLoggedIn();
+                    }
+                    hidePopout();
+                }
             }
-        },
-
-        template: function(content) {
-            var contentBit,
-                bit,
-                data = $.extend(this.defaultData, this.clip);
-
-            for (bit in data) {
-                contentBit = data[bit];
-                content = content.replace('{{ ' + bit + ' }}', contentBit);
-            }
-            return content;
         }
     }
 
@@ -139,38 +92,33 @@ define([
     function startClipping() {
         el = $(config.container).attr('data-clipping-it', true);
         el.bind('mouseup', checkSelection);
-        $('body').bind('mousedown', hidePopout);
+        $(window).bind('mousedown', hidePopout);
         clipping = true;
     }
 
     function stopClipping() {
         el = $(config.container).attr('data-clipping-it', false);
         el.unbind('mouseup', checkSelection);
-        $('body').unbind('mousedown', hidePopout);
+        $(window).unbind('mousedown', hidePopout);
         hidePopout();
         clipping = false;
     }
 
     function checkSelection(e) {
         var selection = getSelectionObject(),
-            startNode = $(selection.range.startContainer.parentNode),
-            endNode = $(selection.range.endContainer.parentNode),
-
-            // Check range stars and ends within element
-            inElem = el.has(startNode).length && el.has(endNode).length;
+            inScope = isRangeInScope(selection.range);
 
         // Trim whitespace
-        selection.text = selection && selection.text.replace(/^\s+|\s+$/g,'');
+        selection.text = selection && selection.text.replace(/^\s+|\s+$/g, '');
 
-        if (selection.text && inElem) {
+        if (selection.text && inScope) {
             showPopout(selection.text, e.pageX + 10, e.pageY - 20);
-        } else {
-            hidePopout();
         }
     }
 
     function getSelectionObject() {
         var obj = {};
+
         if (window.getSelection) {
             obj.selection = window.getSelection();
         }
@@ -182,14 +130,18 @@ define([
             obj.range = obj.selection.createRange();
             obj.text = obj.range.text;
         }
+
         if (!obj.text) obj.text = obj.selection.toString();
         if (!obj.range) obj.range = getRangeObject(obj.selection);
+
         return obj;
     }
 
     function getRangeObject(selection) {
         if (selection.getRangeAt) {
-            return selection.getRangeAt(0);
+            if (!selection.isCollapsed) {
+                return selection.getRangeAt(0);
+            }
         }
         else {
             var range = document.createRange();
@@ -212,6 +164,15 @@ define([
         }
     }
 
+    function isRangeInScope(range) {
+        if (!range) return;
+
+        var startNode = $(range.startContainer.parentNode),
+            endNode = $(range.endContainer.parentNode);
+
+        return el.has(startNode).length && el.has(endNode).length;
+    }
+
     function showPopout(selection, x, y) {
         if (currentClip.content != selection) {
             currentClip.content = selection;
@@ -225,8 +186,12 @@ define([
     }
 
     function hidePopout(e) {
-        // clearSelection();
-        popout.clean();
+        var selection = getSelectionObject();
+        if (selection && isRangeInScope(selection.range)) {
+            clearSelection();
+        }
+
+        currentClip.content = '';
         popout.hide();
     }
 
@@ -238,7 +203,7 @@ define([
         var link = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
-        link.href = '/assets/css/clip.it.css';
+        link.href = req.toUrl('./assets/css/') + 'clip.it.css';
         document.getElementsByTagName('head')[0].appendChild(link);
     }
 
