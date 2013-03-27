@@ -49,21 +49,47 @@ define([
 
         showAction: function(e) {
             e.stopPropagation();
-            var action = e.currentTarget.getAttribute('data-clipit-action');
-            this.actions[action].func();
+            var action = e.currentTarget.getAttribute('data-clipit-action'),
+                templateHTML = this.template(this.actions[action].template);
+
+            this.actions[action].func(templateHTML);
         },
 
         actions: {
             comment: {
-                func: function() {
+                func: function(template) {
                     if (ID.isLoggedIn()) {
-                        $('#discussion-preview-comment').trigger('mousedown').click();
-                    } else {
+                        var commentPreview = $('#discussion-preview-comment'),
+                            commentBody = $('#comment-body'),
+                            overlayDelay = 400;
+
+                        commentBody.val(template);
+                        commentPreview.trigger('mousedown').click();
+                        setTimeout(function() {
+                            commentBody.focus();
+                            commentBody.val(template);
+                        }, overlayDelay);
+                    }
+                    else {
                         ID.showLoginIfNotLoggedIn();
                     }
                     hidePopout();
-                }
+                },
+                template: '<blockquote>{{ content }}</blockquote>\n\n'
             }
+        },
+
+        template: function(content) {
+            var contentBit,
+                bit,
+                data = $.extend(this.defaultData, this.clip);
+
+            for (bit in data) {
+                contentBit = data[bit];
+                content = content.replace('{{ ' + bit + ' }}', contentBit);
+            }
+
+            return content;
         }
     }
 
