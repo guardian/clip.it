@@ -2,8 +2,9 @@ define([
     'jquery',
     'guardian_idToolkit',
     'ichbin',
-    'require'
-    ], function($, ID, ichbin, req) {
+    'require',
+    'overlay'
+    ], function($, ID, ichbin, req, overlay) {
         var el,
             popout,
             defaultData = {},
@@ -35,7 +36,7 @@ define([
 
         hide: function() {
             if (this.el) {
-                this.el.hide();
+                this.el.stop().hide();
             };
         },
 
@@ -44,7 +45,7 @@ define([
                 this.create();
             }
             this.clip = options.clip;
-            this.el.css(options.position).show();
+            this.el.css(options.position).delay(400).show(0);
         },
 
         showAction: function(e) {
@@ -59,16 +60,23 @@ define([
             comment: {
                 func: function(template) {
                     if (ID.isLoggedIn()) {
-                        var commentPreview = $('#discussion-preview-comment'),
-                            commentBody = $('#comment-body'),
-                            overlayDelay = 400;
+                        var id = $('#d2-root').attr('data-discussion-id');
+                        overlay.open(null, 'http://discussion.gulocal.co.uk:5000/post-box/' + id + '?comment_body=' + encodeURIComponent(template));
+                        $(window).on('message', function(ev) {
+                            var e = ev.originalEvent,
+                                comment_success_match = e.data.match(/d2:comment_success:val=(.*)/);
 
-                        commentBody.val(template);
-                        commentPreview.trigger('mousedown').click();
-                        setTimeout(function() {
-                            commentBody.focus();
-                            commentBody.val(template);
-                        }, overlayDelay);
+                            if (comment_success_match && comment_success_match.length > 1) {
+                                var iframe = $('#d2-root iframe'),
+                                    discussion_url = iframe.attr('src').split('?')[0],
+                                    comment = comment_success_match[1].split(','),
+                                    url = discussion_url + '?forcereload=' + comment[1] + '&commentpage=' + comment[0] + '#comment-' + comment[1];
+
+                                iframe.attr('src', url);
+                                overlay.close();
+                                $(window).unbind('message', arguments.callee);
+                            }
+                        });
                     }
                     else {
                         ID.showLoginIfNotLoggedIn();
@@ -132,13 +140,14 @@ define([
 
     function checkSelection(e) {
         var selection = getSelectionObject(),
-            inScope = isRangeInScope(selection.range);
+            inScope = isRangeInScope(selection.range),
+            position = getSelectionPosition(e, selection);
 
         // Trim whitespace
         selection.text = selection && selection.text.replace(/^\s+|\s+$/g, '');
 
         if (selection.text && inScope) {
-            showPopout(selection.text, e.pageX + 10, e.pageY - 20);
+            showPopout(selection.text, position[0], position[1]);
         }
     }
 
@@ -197,6 +206,26 @@ define([
             endNode = $(range.endContainer.parentNode);
 
         return el.has(startNode).length && el.has(endNode).length;
+    }
+
+    function getSelectionPosition(e, selection) {
+        var xOffset = 12,
+            yOffset = $(window).scrollTop() - 20;
+
+        if (selection.range && selection.range.getClientRects) {
+            var rects = selection.range.getClientRects(),
+                rectIndex = selection.range.endOffset == 0 && rects.length > 1 ? rects.length - 2 : rects.length - 1,
+                rect = rects[rectIndex];
+            return [
+                rect.right + xOffset,
+                rect.bottom + yOffset
+            ]
+        } else {
+            return [
+                e.pageX + xOffset,
+                e.pageY + yOffset
+            ]
+        }
     }
 
     function showPopout(selection, x, y) {

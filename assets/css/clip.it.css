@@ -4,6 +4,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
   position: absolute;
   z-index: 500;
+  display: none;
   /* arrow */ }
   .clipit-popout p {
     font-family: Georgia, serif;
