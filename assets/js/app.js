@@ -3,7 +3,7 @@ requirejs.config({
     paths: {
         'guardian_idToolkit': 'https://id.guardian.co.uk/static/180/cs/js/guardian.identity.clientside-toolkit',
         'jquery': '//pasteup.guim.co.uk/js/lib/jquery/1.8.1/jquery.min',
-        'clip.it': 'assets/js/lib/clip.it.v0',
+        'clip.it': 'assets/js/lib/clip.it',
         'ichbin': 'assets/js/lib/ichbin',
         'overlay': 'assets/js/lib/overlay'
     }
