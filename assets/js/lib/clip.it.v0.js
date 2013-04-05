@@ -75,6 +75,10 @@ define([
                                 iframe.attr('src', url);
                                 overlay.close();
                                 $(window).unbind('message', arguments.callee);
+
+                                // Save to ichbin
+                                currentClip['comment_id'] = comment[1];
+                                save();
                             }
                         });
                     }
@@ -246,7 +250,6 @@ define([
             clearSelection();
         }
 
-        currentClip.content = '';
         popout.hide();
     }
 
